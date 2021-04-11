@@ -18,9 +18,9 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         // Команды для работы
         const val SQL_CREATE =
             "CREATE TABLE ${Entry.TABLE_NAME} (" +
-                    "${BaseColumns._ID} INTEGER PRIMARY KEY," +
+                    "${BaseColumns._ID} INTEGER PRIMARY KEY NOT NULL," +
                     "${Entry.COLUMN_NAME_NAME} TEXT," +
-                    "${Entry.COLUMN_NAME_RESULT} TEXT)"
+                    "${Entry.COLUMN_NAME_RESULT} INTEGER)"
         const val SQL_DELETE = "DROP TABLE IF EXISTS ${Entry.TABLE_NAME}"
     }
 
