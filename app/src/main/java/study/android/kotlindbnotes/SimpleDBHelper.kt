@@ -42,7 +42,7 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val DATABASE_NAME = "results.db"
     }
 
-    public fun insert(result: Result){
+    fun insert(result: Result){
         // Открываем базу на запись
         val db = writableDatabase
         // Комплектуем данные для вставки
@@ -54,7 +54,7 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db?.insert(DBContract.Entry.TABLE_NAME, null, values)
     }
 
-    public fun getAll(order: String): List<Result> {
+    fun getAll(order: String): List<Result> {
         val allRecords = mutableListOf<Result>()
         val cursor = readableDatabase.query(DBContract.Entry.TABLE_NAME, null, null,
             null, null,null, order)
@@ -64,6 +64,12 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                            cursor.getInt(cursor.getColumnIndex(DBContract.Entry.COLUMN_NAME_RESULT))))
         }
         return allRecords;
+    }
+
+    fun clearAll(){
+        val db = writableDatabase;
+        db.execSQL(DBContract.SQL_DELETE)
+        onCreate(db);
     }
 
 }
