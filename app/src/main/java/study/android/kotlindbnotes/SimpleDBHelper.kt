@@ -2,9 +2,11 @@ package study.android.kotlindbnotes
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
+import org.jetbrains.annotations.Contract
 
 class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
@@ -22,6 +24,8 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     "${Entry.COLUMN_NAME_NAME} TEXT," +
                     "${Entry.COLUMN_NAME_RESULT} INTEGER)"
         const val SQL_DELETE = "DROP TABLE IF EXISTS ${Entry.TABLE_NAME}"
+
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -71,5 +75,69 @@ class SimpleDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.execSQL(DBContract.SQL_DELETE)
         onCreate(db);
     }
+
+    fun deleteSubStringName(part: String){
+        val db = writableDatabase;
+        db.delete(DBContract.Entry.TABLE_NAME,DBContract.Entry.COLUMN_NAME_NAME + " LIKE ?", arrayOf("%"+part+"%"))
+    }
+
+    fun all() : Int{
+        val db = writableDatabase;
+        val cursor = db.query(DBContract.Entry.TABLE_NAME, arrayOf("SUM(RESULT)"), null, null, null, null, null)
+        var res = 0
+        if (cursor.moveToFirst()){
+            res = cursor.getInt(0)
+        }
+        return res
+    }
+
+    fun good() : Int{
+        val db = writableDatabase;
+
+        val cursor1 = db.query(DBContract.Entry.TABLE_NAME, arrayOf("AVG(RESULT)"), null, null, null, null, null)
+        var avg = 0
+        if (cursor1.moveToFirst()){
+            avg = cursor1.getInt(0)
+        }
+        val cursor2 = db.query(DBContract.Entry.TABLE_NAME, arrayOf("COUNT(*)"), "RESULT > " + avg, null, null, null, null)
+        var res = 0
+        if (cursor2.moveToFirst()){
+            res = cursor2.getInt(0)
+        }
+        return res
+    }
+
+    fun longestName() : String{
+        val db = writableDatabase;
+        val cursor = db.query(DBContract.Entry.TABLE_NAME, arrayOf(DBContract.Entry.COLUMN_NAME_NAME), null, null, null, null, "LENGTH(NAME) DESC", "1")
+        var res = ""
+        if (cursor.moveToFirst()){
+            res = cursor.getString(0)
+        }
+        return res
+    }
+
+    fun best() : String{
+        val db = writableDatabase;
+        val cursor = db.query(DBContract.Entry.TABLE_NAME, arrayOf(DBContract.Entry.COLUMN_NAME_NAME), null, null, null, null, "RESULT DESC", "1")
+        var res = ""
+        if (cursor.moveToFirst()){
+            res = cursor.getString(0)
+        }
+        return res
+    }
+
+    fun english() : Int{
+        val db = writableDatabase;
+        val cursor = db.query(DBContract.Entry.TABLE_NAME, arrayOf("COUNT(*)"), "NAME < 'А'", null, null, null, null, null)
+        var res = 0
+        if (cursor.moveToFirst()){
+            res = cursor.getInt(0)
+        }
+        return res
+    }
+
+
+
 
 }
